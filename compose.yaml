@@ -1,0 +1,65 @@
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  todo-app:
+    container_name: task-app
+    profiles: [ dev ]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: [ app-network ]
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+      args:
+        DOCKER_ENV: development
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+    ports:
+      - "3003:3000"
+    restart: unless-stopped
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: yarn dev
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -f http://localhost:3003/api/health || exit 1']
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+  postgres:
+    image: postgres:16
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=todoapp
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d todoapp"]
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
