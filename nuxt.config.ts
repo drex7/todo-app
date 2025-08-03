@@ -22,13 +22,15 @@ export default defineNuxtConfig({
   },
   devtools: { enabled: true },
   experimental: {
-    cookieStore: true
+    cookieStore: true,
   },
   runtimeConfig: {
-    jwtSecret: process.env.JWT_SECRET
+    databaseUrl: process.env.DATABASE_URL,
+    directUrl: process.env.DIRECT_URL,
+    jwtSecret: process.env.JWT_SECRET,
   },
   app: {
-    pageTransition: { name: 'page', mode: 'out-in' },
+    pageTransition: { name: "page", mode: "out-in" },
     head: {
       title: "Todo App",
       meta: [
@@ -66,9 +68,9 @@ export default defineNuxtConfig({
   //   dataValue: "theme", // activate data-theme in <html> tag
   //   classSuffix: "",
   // },
-  tailwindcss: { 
+  tailwindcss: {
     exposeConfig: true,
     cssPath: "~/assets/css/tailwind.css",
-   },
+  },
   // css: ["~/assets/app.css"],
 });
