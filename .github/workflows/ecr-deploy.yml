@@ -23,9 +23,9 @@ jobs:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
-          aws-region: ${{ env.AWS_REGION }}
-          role-to-assume: ${{ secrets.AWS_GITHUB_OIDC_ROLE_ARN }}
-          role-session-name: GitHubActionsSession
+        aws-region: ${{ secrets.AWS_REGION }}
+        role-to-assume: ${{ secrets.AWS_GITHUB_OIDC_ROLE_ARN }}
+        role-session-name: GitHubActionsSession
 
     - name: Login to Amazon ECR Public
       run: aws ecr-public get-login-password | docker login --username AWS --password-stdin public.ecr.aws
