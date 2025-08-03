@@ -10,7 +10,7 @@
     "prebuild": "nuxt prepare && yarn run prisma:generate",
     "build": "nuxt build && yarn run copy_prisma_engine",
     "postinstall1": "nuxt prepare",
-    "start": "node .output/server/index.mjs",
+    "start": "dotenv -- node .output/server/index.mjs",
     "generate": "nuxt generate",
     "seed": "tsx prisma/seed.ts",
     "preview": "nuxt preview",
