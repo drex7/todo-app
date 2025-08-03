@@ -41,12 +41,13 @@ export default defineNuxtConfig({
       link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
     },
   },
-  // ssr: true,
+  ssr: true,
   nitro: {
     replace: {
       "import * as process": "import * as processUnused",
     },
-    preset: "node-server", // Ensures full Node.js support (needed for Prisma)
+    preset: "vercel", // Ensures full Node.js support (needed for Prisma)
+    serveStatic: true,
     esbuild: {
       options: {
         target: "es2022",
