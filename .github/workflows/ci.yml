@@ -53,6 +53,9 @@ jobs:
           docker build -t ${{ env.DOCKERHUB_REPO }}:${{ env.IMAGE_TAG }} .
           docker push ${{ env.DOCKERHUB_REPO }}:${{ env.IMAGE_TAG }}
 
+          DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ${{ env.DOCKERHUB_REPO }}:${{ env.IMAGE_TAG }} | cut -d@ -f2)
+          echo "digest=$DIGEST" >> $GITHUB_OUTPUT
+
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v2
         with:
