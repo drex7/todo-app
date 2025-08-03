@@ -24,7 +24,7 @@ jobs:
       uses: aws-actions/configure-aws-credentials@v2
       with:
           aws-region: ${{ env.AWS_REGION }}
-          role-to-assume: ${{ env.GITHUB_OIDC_ROLE }}
+          role-to-assume: ${{ secrets.AWS_GITHUB_OIDC_ROLE_ARN }}
           role-session-name: GitHubActionsSession
 
     - name: Login to Amazon ECR Public
