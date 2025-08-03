@@ -7,25 +7,36 @@
   "scripts": {
     "dev": "nuxt dev",
     "prepare": "nuxt prepare",
-    "prebuild": "nuxt prepare &&npm run prisma:generate",
-    "build": "nuxt build && npm run copy_prisma_engine",
+    "prebuild": "nuxt prepare && yarn run prisma:generate",
+    "build": "nuxt build && yarn run copy_prisma_engine",
+    "postinstall1": "nuxt prepare",
     "start": "node .output/server/index.mjs",
     "generate": "nuxt generate",
+    "seed": "tsx prisma/seed.ts",
     "preview": "nuxt preview",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate deploy",
-    "copy_prisma_engine": "mv ./generated/prisma/libquery_engine-rhel-openssl-3.0.x.so.node .output/server/node_modules/@prisma/client/"
+    "copy_prisma_engine1": "mv ./generated/prisma/libquery_engine-rhel-openssl-3.0.x.so.node .output/server/node_modules/@prisma/client/",
+    "copy_prisma_engine": "ls"
   },
   "dependencies": {
     "@prisma/client": "6.9.0",
     "@prisma/extension-accelerate": "^2.0.1",
+    "bcrypt": "^5.1.1",
     "dotenv-cli": "^8.0.0",
-    "nuxt": "3.17.5"
+    "jsonwebtoken": "^9.0.2",
+    "nuxt": "^4.0.2",
+    "nuxt-auth-utils": "0.5.22"
   },
   "devDependencies": {
     "@babel/eslint-parser": "7.27.5",
+    "@nuxtjs/color-mode": "^3.5.2",
     "@nuxtjs/eslint-config": "12.0.0",
     "@nuxtjs/eslint-module": "4.1.0",
+    "@nuxtjs/tailwindcss": "^6.14.0",
+    "@types/bcrypt": "^6.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^20.16.5",
     "eslint": "8.57.1",
     "eslint-config-prettier": "10.1.5",
     "eslint-plugin-nuxt": "4.0.0",
@@ -34,7 +45,7 @@
     "prisma": "6.9.0"
   },
   "prisma": {
-    "seed": "node prisma/seed.js"
+    "seed": "tsx prisma/seed.ts"
   },
   "engines": {
     "node": ">=20.0.0 <21.0.0"

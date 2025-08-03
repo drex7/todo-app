@@ -1,8 +1,9 @@
 <template>
-    <main>  
-      <NuxtLayout name="default">
-        <NuxtPage/>
-      </NuxtLayout>
-    </main>
+  <div>
+  <NuxtPage :transition="{
+      name: 'bounce',
+      mode: 'out-in'
+    }"
+  />
+  </div>
 </template>
-  

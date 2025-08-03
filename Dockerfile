@@ -27,7 +27,7 @@ WORKDIR /app
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.output ./.output
 # COPY --from=builder /app/prisma ./prisma
-# COPY --from=builder /app/generated ./generated
+COPY --from=builder /app/generated ./generated
 COPY --from=builder /app/.nuxt ./.nuxt
 COPY --from=builder /app/package.json ./
 

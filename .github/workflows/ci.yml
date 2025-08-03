@@ -1,0 +1,86 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: todoapp
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install frontend dependencies
+        run: cd frontend && npm install
+
+      - name: Install backend dependencies
+        run: cd backend && npm install
+
+      - name: Run backend migrations and seed
+        run: cd backend && npx prisma migrate deploy && npm run seed
+        env:
+          DATABASE_URL: postgresql://user:password@localhost:5432/todoapp?schema=public
+          JWT_SECRET: your_jwt_secret_key
+
+      - name: Run backend API tests
+        run: cd backend && npm run test:coverage
+        env:
+          DATABASE_URL: postgresql://user:password@localhost:5432/todoapp?schema=public
+          JWT_SECRET: your_jwt_secret_key
+
+      - name: Upload backend coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: backend/coverage
+
+      - name: Start backend server
+        run: cd backend && npm start &
+        env:
+          DATABASE_URL: postgresql://user:password@localhost:5432/todoapp?schema=public
+          JWT_SECRET: your_jwt_secret_key
+
+      - name: Build frontend
+        run: cd frontend && npm run build
+
+      - name: Run frontend UI tests
+        run: cd frontend && npm run test
+        env:
+          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+
+      - name: Upload Cypress screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: frontend/cypress/screenshots
+
+      - name: Upload Cypress videos
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-videos
+          path: frontend/cypress/videos

@@ -1,20 +1,36 @@
 import { fileURLToPath } from "url";
+import type { NuxtPage }  from "nuxt/schema";
 
 export default defineNuxtConfig({
-  compatibilityDate: '2025-06-10',
+  /*
+  hooks: {
+    'pages:extend' (pages) {
+      function setMiddleware (pages: NuxtPage[]) {
+        pages.forEach(page => {
+          console.log("page middleware", page)
+          page.middleware = ["auth.global"];
+        });
+      }
+      setMiddleware(pages)
+    }
+  },
+  */
+  compatibilityDate: "2025-06-10",
   // Disable strict
   typescript: {
     strict: false,
   },
-  /*
-  alias: {
-      "@": "/",
-      "~prismaClient": fileURLToPath(new URL('./generated/prisma', import.meta.url))
+  devtools: { enabled: true },
+  experimental: {
+    cookieStore: true
   },
-  */
+  runtimeConfig: {
+    jwtSecret: process.env.JWT_SECRET
+  },
   app: {
+    pageTransition: { name: 'page', mode: 'out-in' },
     head: {
-      title: "Blog Post App",
+      title: "Todo App",
       meta: [
         { charset: "utf-8" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
@@ -25,14 +41,13 @@ export default defineNuxtConfig({
   },
   // ssr: true,
   nitro: {
-    
     replace: {
-      'import * as process': 'import * as processUnused',
+      "import * as process": "import * as processUnused",
     },
     preset: "node-server", // Ensures full Node.js support (needed for Prisma)
     esbuild: {
       options: {
-        target: "es2022", 
+        target: "es2022",
       },
     },
     externals: {
@@ -43,5 +58,17 @@ export default defineNuxtConfig({
         "process", // Node.js process module
       ],
     },
-  }
+  },
+  modules: ["@nuxtjs/tailwindcss", "nuxt-auth-utils"],
+  // modules: [ "@nuxtjs/color-mode"],
+  // colorMode: {
+  //   preference: "system", // default theme
+  //   dataValue: "theme", // activate data-theme in <html> tag
+  //   classSuffix: "",
+  // },
+  tailwindcss: { 
+    exposeConfig: true,
+    cssPath: "~/assets/css/tailwind.css",
+   },
+  // css: ["~/assets/app.css"],
 });
