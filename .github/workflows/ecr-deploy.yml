@@ -1,0 +1,43 @@
+name: Build & Push Nuxt App to Amazon ECR
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      GITHUB_OIDC_ROLE: ${{ secrets.AWS_GITHUB_OIDC_ROLE_ARN }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+
+
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ env.GITHUB_OIDC_ROLE }}
+          role-session-name: GitHubActionsSession
+
+    - name: Login to Amazon ECR Public
+      run: aws ecr-public get-login-password | docker login --username AWS --password-stdin public.ecr.aws
+
+    - name: Build Docker image
+      run: |
+        docker build -t todo-app .
+
+    - name: Tag Docker image
+      run: |
+        docker tag todo-app ${{ env.ECR_REPOSITORY }}:latest
+
+    - name: Push Docker image to Amazon ECR
+      run: |
+        docker push ${{ env.ECR_REPOSITORY }}:latest
