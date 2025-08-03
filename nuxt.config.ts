@@ -25,9 +25,9 @@ export default defineNuxtConfig({
     cookieStore: true,
   },
   runtimeConfig: {
+    jwtSecret: process.env.JWT_SECRET,
     databaseUrl: process.env.DATABASE_URL,
     directUrl: process.env.DIRECT_URL,
-    jwtSecret: process.env.JWT_SECRET,
   },
   app: {
     pageTransition: { name: "page", mode: "out-in" },
